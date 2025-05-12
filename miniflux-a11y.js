@@ -18,7 +18,10 @@ function init() {
 		itemsContainer.setAttribute('aria-labelledby', 'page-header-title');
 
 		// Give all items a list item role, and make their accessible names more descriptive.
-		itemsContainer.querySelectorAll('article').forEach(item => {
+		const items = itemsContainer.querySelectorAll('article')
+		const itemCount = items.length;
+
+		items.forEach((item, index) => {
 			item.role = 'listitem';
 
 			let labelledBy = item.getAttribute('aria-labelledby');
@@ -33,6 +36,10 @@ function init() {
 			const feedTitleID = assignAutoID(item.querySelector('.item-meta-info-title > a'));
 			labelledBy = `${labelledBy} ${semicolonNode.id} ${feedTitleID}`;
 
+			const positionText = `${index + 1} of ${itemCount}`;
+			const positionNode = makeHiddenTextNode(`a11y-unread-item-position-${index}`, positionText, item);
+			labelledBy = `${labelledBy} ${semicolonNode.id} ${positionNode.id}`;
+
 			item.setAttribute('aria-labelledby', labelledBy);
 		});
 
@@ -43,14 +50,14 @@ function init() {
 	}
 }
 
-function makeHiddenTextNode(id, text) {
+function makeHiddenTextNode(id, text, parent=document.body) {
 	const node = document.createElement('span');
 
 	node.setAttribute('id', id);
 	node.hidden = true;
 	node.textContent = text;
 
-	document.body.appendChild(node);
+	parent.appendChild(node);
 
 	return node;
 }
